@@ -1,0 +1,48 @@
+@startuml AddTask
+
+actor User
+participant "Add Task click handler" as Handler
+participant TodoManager
+participant "Helper Functions" as Helpers
+participant localStorage
+participant DOM
+
+User -> Handler : click "Add Task"
+activate Handler
+
+Handler -> TodoManager : addTask(input.value, "simple")
+activate TodoManager
+
+TodoManager -> TodoManager : trim description
+TodoManager -> TodoManager : create task object
+TodoManager -> TodoManager : tasks.push(task)
+
+TodoManager -> TodoManager : saveTasks()
+TodoManager -> localStorage : setItem("todo-tasks", JSON.stringify(tasks))
+localStorage --> TodoManager : stored
+
+TodoManager -> TodoManager : render(task.id)
+
+TodoManager -> TodoManager : renderPendingRows()
+TodoManager -> Helpers : buildTaskRow(...)
+Helpers --> TodoManager : row HTML
+
+TodoManager -> TodoManager : renderCompletedRows()
+
+TodoManager -> Helpers : summarizeWorkload(this)
+Helpers --> TodoManager : workload summary
+
+TodoManager -> DOM : container.innerHTML = rendered HTML
+TodoManager -> DOM : attach toggle/delete listeners
+TodoManager -> DOM : add "flash" class to new row
+TodoManager -> DOM : update document.title
+
+TodoManager --> Handler : true
+deactivate TodoManager
+
+Handler -> DOM : input.value = ""
+Handler --> User : updated task list displayed
+
+deactivate Handler
+
+@enduml
