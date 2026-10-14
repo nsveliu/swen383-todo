@@ -36,4 +36,11 @@ export class TodoService {
     this.tasks = this.tasks.filter((task) => task.id !== id);
     this.storage.save(this.tasks);
   }
+
+  getWorkloadSummary() {
+    const done = this.tasks.filter((task) => task.completed).length;
+    const urgent = this.tasks.filter((task) => !task.completed && task.priority === 'high').length;
+    const normal = this.tasks.filter((task) => !task.completed && task.priority !== 'high').length;
+    return `${done}/${this.tasks.length} done - ${urgent} urgent, ${normal} normal remaining`;
+  }
 }
