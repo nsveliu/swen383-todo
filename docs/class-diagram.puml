@@ -1,16 +1,27 @@
-@startuml ClassDiagram
-class TodoList {
-  - items: Task[]
-  + add(t: Task)
-  + remove(id)
-}
+@startuml TodoAppWeek6
+class TodoController
+class TodoRenderer
+class TodoService
+abstract class StorageHandler
+class LocalStorageHandler
+class InMemoryStorageHandler
+abstract class StorageFactory
+class LocalStorageFactory
+class InMemoryStorageFactory
+class TaskBuilder
+class Task
 
-class Task {
-  - title: String
-  - done: boolean
-  + complete()
-}
-
-TodoList *-- "0..*" Task : owns
-TodoList ..> Storage : uses
+TodoController --> TodoService : delegates
+TodoController --> TodoRenderer : renders
+TodoRenderer ..> TodoService : reads
+TodoService --> StorageHandler : persists through
+TodoService --> TaskBuilder : builds tasks
+TaskBuilder --> Task : creates
+StorageHandler <|-- LocalStorageHandler
+StorageHandler <|-- InMemoryStorageHandler
+StorageFactory --> TodoService : createService()
+StorageFactory <|-- LocalStorageFactory
+StorageFactory <|-- InMemoryStorageFactory
+LocalStorageFactory --> LocalStorageHandler : creates
+InMemoryStorageFactory --> InMemoryStorageHandler : creates
 @enduml
